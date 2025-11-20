@@ -5,6 +5,36 @@ import { api } from "./_generated/api";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
+// Helper function to retry with exponential backoff
+async function retryWithBackoff<T>(
+  fn: () => Promise<T>,
+  maxRetries = 3,
+  initialDelay = 1000
+): Promise<T> {
+  let lastError: Error | null = null;
+  
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error as Error;
+      
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const isOverloaded = errorMessage.includes("overloaded") || errorMessage.includes("503");
+      
+      if (isOverloaded && i < maxRetries - 1) {
+        const delay = initialDelay * Math.pow(2, i);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        continue;
+      }
+      
+      throw error;
+    }
+  }
+  
+  throw lastError!;
+}
+
 // Get all messages for a user
 export const getMessages = query({
   args: {
@@ -89,16 +119,7 @@ export const generateResponse = action({
           parts: [{ text: msg.content }],
         }));
 
-      // Initialize Gemini model
-      const model = genAI.getGenerativeModel({ 
-        model: "gemini-2.5-flash",
-        generationConfig: {
-          temperature: 0.9,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 2048,
-        },
-        systemInstruction: `You are an AI assistant for a fitness application. 
+      const systemInstruction = `You are an AI assistant for a fitness application. 
         Your purpose is to provide accurate, clear, and helpful responses only about:
         - Fitness
         - Workouts
@@ -113,24 +134,66 @@ export const generateResponse = action({
         STRICT RULES:
         1. Do NOT answer any question that is not related to fitness, health, exercise, or diet.
         2. If a user asks anything outside these topics, politely decline by saying:
-          “I can help only with fitness, diet, or health-related questions.”
+          "I can help only with fitness, diet, or health-related questions."
         3. Keep responses simple, practical, and beginner-friendly unless the user asks for advanced details.
         4. Ensure that safety is prioritized—avoid suggesting extreme diets or dangerous workouts.
         5. When giving workout plans or diet recommendations, generalize them unless the user provides personal details (age, weight, goal, etc.).
 
         Your role is ONLY to help users improve their fitness, diet, and health.
-        `,
-      });
+        `;
 
-      // Start chat with history
-      const chat = model.startChat({
-        history: conversationHistory,
-      });
+      // Generate response with retry and fallback
+      const generateContent = async () => {
+        try {
+          // Try primary model
+          const model = genAI.getGenerativeModel({ 
+            model: "gemini-2.0-flash",
+            generationConfig: {
+              temperature: 0.9,
+              topK: 40,
+              topP: 0.95,
+              maxOutputTokens: 2048,
+            },
+            systemInstruction,
+          });
 
-      // Send the current message
-      const result = await chat.sendMessage(args.userMessage);
-      const response = result.response;
-      const aiResponse = response.text();
+          const chat = model.startChat({
+            history: conversationHistory,
+          });
+
+          const result = await chat.sendMessage(args.userMessage);
+          return result.response.text();
+        } catch (primaryError) {
+          const errorMessage = primaryError instanceof Error ? primaryError.message : String(primaryError);
+          
+          // If primary model fails, try fallback
+          if (errorMessage.includes("overloaded") || errorMessage.includes("503")) {
+            console.log("Primary model overloaded, trying fallback model...");
+            const fallbackModel = genAI.getGenerativeModel({ 
+              model: "gemini-2.5-pro",
+              generationConfig: {
+                temperature: 0.9,
+                topK: 40,
+                topP: 0.95,
+                maxOutputTokens: 2048,
+              },
+              systemInstruction,
+            });
+
+            const chat = fallbackModel.startChat({
+              history: conversationHistory,
+            });
+
+            const result = await chat.sendMessage(args.userMessage);
+            return result.response.text();
+          }
+          
+          throw primaryError;
+        }
+      };
+
+      // Execute with retry logic
+      const aiResponse = await retryWithBackoff(generateContent, 3, 2000);
 
       // Add AI response to database
       await ctx.runMutation(api.messages.addMessage, {
@@ -143,8 +206,22 @@ export const generateResponse = action({
     } catch (error) {
       console.error("Detailed error generating response:", error);
       
-      // Provide more specific error message
-      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      if (error instanceof Error) {
+        console.error("Error name:", error.name);
+        console.error("Error message:", error.message);
+      }
+      
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
+      // Provide user-friendly error messages
+      if (errorMessage.includes("overloaded") || errorMessage.includes("503")) {
+        throw new Error("The AI service is currently busy. Please try again in a few moments.");
+      } else if (errorMessage.includes("API key") || errorMessage.includes("API_KEY_INVALID")) {
+        throw new Error("API configuration error. Please contact support.");
+      } else if (errorMessage.includes("quota") || errorMessage.includes("QUOTA_EXCEEDED")) {
+        throw new Error("API quota exceeded. Please try again later.");
+      }
+      
       throw new Error(`Failed to generate AI response: ${errorMessage}`);
     }
   },

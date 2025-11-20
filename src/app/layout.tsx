@@ -38,7 +38,7 @@ export default function RootLayout({
             <div className="absolute inset-0 bg-[linear-gradient(var(--cyber-grid-color)_1px,transparent_1px),linear-gradient(90deg,var(--cyber-grid-color)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
           </div>
 
-          <main className="pt-24 flex-grow">{children}</main>
+          <main className="pt-10 flex-grow">{children}</main>
           {!isChatPage && <Footer />}
         </body>
       </html>

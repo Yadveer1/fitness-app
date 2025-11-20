@@ -116,11 +116,24 @@ const CalorieCounterPage = () => {
       setAnalysis(result);
     } catch (err) {
       console.error("Error analyzing image:", err);
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Failed to analyze the image. Please try again."
-      );
+      
+      // Extract user-friendly error message
+      let errorMessage = "Failed to analyze the image. Please try again.";
+      
+      if (err instanceof Error) {
+        // Check if it's a Convex error with our custom message
+        if (err.message.includes("AI service is currently busy")) {
+          errorMessage = "The AI service is currently busy. Please wait a moment and try again.";
+        } else if (err.message.includes("API configuration error")) {
+          errorMessage = "Service configuration error. Please contact support.";
+        } else if (err.message.includes("quota exceeded")) {
+          errorMessage = "Service limit reached. Please try again later.";
+        } else if (err.message) {
+          errorMessage = err.message;
+        }
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsAnalyzing(false);
     }
@@ -150,7 +163,7 @@ const CalorieCounterPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 p-4 md:p-6">
+    <div className="min-h-screen bg-transparent from-background via-background to-primary/5 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-10 md:mb-12">
@@ -165,7 +178,7 @@ const CalorieCounterPage = () => {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6 md:gap-8">
+        <div className={`${analysis || isAnalyzing ? 'grid lg:grid-cols-2 gap-6 md:gap-8' : 'max-w-2xl mx-auto'}`}>
           {/* Upload Section */}
           <Card className="backdrop-blur-sm bg-card/50 border-2 shadow-xl hover:shadow-2xl transition-all duration-300">
             <CardHeader className="space-y-1">
@@ -278,7 +291,7 @@ const CalorieCounterPage = () => {
             </CardContent>
           </Card>
 
-          {/* Results Section - Only show when there's analysis or loading */}
+          {/* Results Section - Only show when analyzing or analysis complete */}
           {(analysis || isAnalyzing) && (
             <Card className="backdrop-blur-sm bg-card/50 border-2 shadow-xl hover:shadow-2xl transition-all duration-300">
               <CardHeader className="space-y-1">

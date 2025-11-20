@@ -6,7 +6,7 @@ import Link from "next/link";
 const HomePage = () => {
   return (
     <div className="flex flex-col min-h-screen text-foreground">
-      <section className="relative z-10 pb-24 pt-2 flex-grow">
+      <section className="relative z-10 pb-24 flex-grow">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative">
             {/* CORNER DECARATION */}
@@ -57,7 +57,7 @@ const HomePage = () => {
               </div>
 
               {/* BUTTON */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-6">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   size="lg"
                   asChild
