@@ -1,0 +1,264 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  /* Base Variables */
+  --radius: 0.5rem;
+
+  /* Cyberpunk Theme Colors (Mapped to new theme) */
+  --cyber-black: #050a0a;
+  --cyber-dark: #1a2c2a;
+  --cyber-blue-bright: #4cd6c2;
+  --cyber-blue: #78cbf5;
+  --cyber-blue-dark: #0f2926;
+  --cyber-blue-glow: #bbf7ed;
+  --cyber-accent: #1a2c2a;
+
+  /* Background - Light and airy */
+  --background: #f2fcfb;
+  --foreground: #1a3836;
+
+  /* Card and popover elements - White for contrast */
+  --card: #ffffff;
+  --card-foreground: #1a3836;
+  --popover: #ffffff;
+  --popover-foreground: #1a3836;
+
+  /* Primary - Teal/Green */
+  --primary: #2dd4bf;
+  --primary-foreground: #042f2e;
+
+  /* Secondary - Blue */
+  --secondary: #38bdf8;
+  --secondary-foreground: #0c4a6e;
+
+  /* Accent - Dark for contrast */
+  --accent: #1a2c2a;
+  --accent-foreground: #f2fcfb;
+
+  /* Muted elements */
+  --muted: #e0f2f1;
+  --muted-foreground: #475569;
+
+  /* System colors */
+  --destructive: #ef4444;
+  --border: #cbd5e1;
+  --input: #cbd5e1;
+  --ring: #2dd4bf;
+
+  /* Chart colors */
+  --chart-1: #2dd4bf;
+  --chart-2: #38bdf8;
+  --chart-3: #1a2c2a;
+  --chart-4: #99f6e4;
+  --chart-5: #0f766e;
+
+  /* Sidebar colors - Dark for high contrast */
+  --sidebar: #111827;
+  --sidebar-foreground: #f3f4f6;
+  --sidebar-primary: #2dd4bf;
+  --sidebar-primary-foreground: #042f2e;
+  --sidebar-accent: #1f2937;
+  --sidebar-accent-foreground: #f3f4f6;
+  --sidebar-border: #1f2937;
+  --sidebar-ring: #2dd4bf;
+
+  /* Custom Cyberpunk UI Variables */
+  --cyber-grid-color: rgba(17, 24, 39, 0.05);
+  --cyber-glow-primary: rgba(45, 212, 191, 0.2);
+  --cyber-glow-strong: rgba(45, 212, 191, 0.5);
+  --cyber-line-color: rgba(17, 24, 39, 0.1);
+  --cyber-terminal-bg: rgba(17, 24, 39, 0.9);
+  --cyber-text-bright: #111827;
+  --cyber-text-muted: rgba(17, 24, 39, 0.7);
+  --cyber-text-dim: rgba(17, 24, 39, 0.5);
+}
+
+.dark {
+  /* Background - Light and airy */
+  --background: #f2fcfb;
+  --foreground: #1a3836;
+
+  /* Card and popover elements - White for contrast */
+  --card: #ffffff;
+  --card-foreground: #1a3836;
+  --popover: #ffffff;
+  --popover-foreground: #1a3836;
+
+  /* Primary - Teal/Green */
+  --primary: #2dd4bf;
+  --primary-foreground: #042f2e;
+
+  /* Secondary - Blue */
+  --secondary: #38bdf8;
+  --secondary-foreground: #0c4a6e;
+
+  /* Accent - Dark for contrast */
+  --accent: #1a2c2a;
+  --accent-foreground: #f2fcfb;
+
+  /* Muted elements */
+  --muted: #e0f2f1;
+  --muted-foreground: #475569;
+
+  /* System colors */
+  --destructive: #ef4444;
+  --border: #cbd5e1;
+  --input: #cbd5e1;
+  --ring: #2dd4bf;
+
+  /* Chart colors */
+  --chart-1: #2dd4bf;
+  --chart-2: #38bdf8;
+  --chart-3: #1a2c2a;
+  --chart-4: #99f6e4;
+  --chart-5: #0f766e;
+
+  /* Sidebar colors - Dark for high contrast */
+  --sidebar: #111827;
+  --sidebar-foreground: #f3f4f6;
+  --sidebar-primary: #2dd4bf;
+  --sidebar-primary-foreground: #042f2e;
+  --sidebar-accent: #1f2937;
+  --sidebar-accent-foreground: #f3f4f6;
+  --sidebar-border: #1f2937;
+  --sidebar-ring: #2dd4bf;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  /* https://tailwindcss.com/docs/upgrade-guide#buttons-use-the-default-cursor */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@keyframes scanline {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 100%;
+  }
+}
+
+/* TODO: EXPLAIN THIS BC U PROMISED JUST IN THE FIRST SECTION */
+@keyframes slow-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-scanline {
+  animation: scanline 8s linear infinite;
+}
+
+.animate-slow-spin {
+  animation: slow-spin 12s linear infinite;
+}
+
+@keyframes sound-wave {
+  0% {
+    height: 10%;
+  }
+  50% {
+    height: 100%;
+  }
+  100% {
+    height: 10%;
+  }
+}
+
+.animate-sound-wave {
+  animation: sound-wave 1.2s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+  opacity: 0.5;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--cyber-blue-bright);
+  opacity: 1;
+}
+
+/* Firefox scrollbar */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) transparent;
+}
