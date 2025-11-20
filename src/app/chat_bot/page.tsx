@@ -117,7 +117,7 @@ const ChatBotPage = () => {
               
               <p className="text-muted-foreground max-w-md font-mono text-sm">
                 Ask me anything about fitness, workouts, nutrition, or health.
-                I'm here to help you achieve your goals.
+                I&apos;m here to help you achieve your goals.
               </p>
               
               <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-2xl">
